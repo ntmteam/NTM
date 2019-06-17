@@ -16,9 +16,6 @@ class Controller(nn.Module):
 		nn.init.normal_(self.fc1.bias, std=0.01)
 		nn.init.normal_(self.fc2.bias, std=0.01)
 
-	
-       
-		
 	def forward(self, x, last_read):
 		x = torch.cat((x, last_read), dim = 1)
 		x = F.sigmoid(self.fc1(x))
