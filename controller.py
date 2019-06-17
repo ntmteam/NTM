@@ -4,10 +4,10 @@ import torch.nn as nn
 import torch.nn.functional as F 
 
 class Controller(nn.Module):
-	def __init__(self, input , output, ):
+	def __init__(self, input , output, hid ):
 		super(Controller, self).__init__()
-		self.fc1 = nn.Linear(input, )
-		self.fc2 = nn.Linear(input, )
+		self.fc1 = nn.Linear(input, hid)
+		self.fc2 = nn.Linear(input, hid )
 		
 	def forward(self, x, last_read):
 		x = torch.cat((x, last_read), dim = 1)
