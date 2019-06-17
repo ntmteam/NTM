@@ -8,8 +8,8 @@ class Memory(nn.Module):
     
     self.N = N
     self.M = M
-    self.read = 
-    self.write = 
+    self.read = self.N + 1 + 1 + 3 + 1
+    self.write = self.N + 1 + 1 + 3 + 1 + self.N + self.N
     self.w_last = []
   def get.weights(self):
     return self.w_last
