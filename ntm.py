@@ -7,28 +7,28 @@ from controller import Controller
 
 
 class NTM(nn.Module):
-    def __init__(self, M, N, num_inputs, num_outputs, controller_out_dim, controller_hid_dim):
+    def __init__(self, M, N, input_size, output_size, controller_out_dim, controller_hid_dim):
         super(NTM, self).__init__()
 
        
-        self.num_inputs = num_inputs
-        self.num_outputs = num_outputs
+        self.num_inputs = input_size
+        self.num_outputs = output_size
         self.M = M
         self.N = N
 
         self.memory = torch.zeros(self.M, self.N)
         self.last_read = torch.zeros(1, self.N)
 
-        self.controller = Controller(self.num_inputs + self.N, controller_out_dim, controller_hid_dim)
+        self.controller = Controller(self.input_size + self.N, controller_out_dim, controller_hid_dim)
         self.read_head = ReadHead(self.M, self.N, controller_out_dim)
         self.write_head = WriteHead(self.M, self.N, controller_out_dim)
 
-        self.fc_out = nn.Linear(self.num_inputs + N, self.num_outputs)
+        self.fc_out = nn.Linear(self.input_size + N, self.num_output_size)
         self.reset_parameters()
 
     def forward(self, X=None):
         if X is None:
-            X = torch.zeros(1, self.num_inputs)
+            X = torch.zeros(1, self.input_size)
 
         controller_out = self.controller(X, self.last_read)
         self._read_write(controller_out)
