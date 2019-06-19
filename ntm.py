@@ -27,7 +27,6 @@ class NTM(nn.Module):
         self.reset_parameters()
 
     def forward(self, X=None):
-
         if X is None:
             X = torch.zeros(1, self.num_inputs)
 
