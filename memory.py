@@ -36,7 +36,7 @@ class Memory(nn.Module):
   
   def _similarity(self, key, stren, memory):
     w = F.cosine_similarity(memory, k, -1, 1e-16)
-    w = F.softmax(β * w, dim=-1)
+    w = F.softmax(stren * w, dim=-1)
     return w
   
   def _interpolate(self, wc, gate, w_last):
@@ -95,8 +95,7 @@ class WriteHead(Memory):
         nn.init.xavier_uniform_(self.fc_write.weight, gain=1.4)
         nn.init.normal_(self.fc_write.bias, std=0.01)
 
-    def write(self, memory, w, e, a):
-        """write to memory (according to section 3.2)."""
+    def write(self, memory, w, e, a):   
         w = torch.squeeze(w)
         e = torch.squeeze(e)
         a = torch.squeeze(a)
@@ -122,17 +121,17 @@ class WriteHead(Memory):
         a = F.tanh(a)
         e = F.sigmoid(e)
 
-        w = self.address(k, β, g, s, γ, memory, self.w_last[-1])
+        w = self.address(key, stren, gate, shift, sharp, memory, self.w_last[-1])
         self.w_last.append(w)
         mem = self.write(memory, w, e, a)
         return mem, w
 
 
-def _convolve(w, s):
-    b, d = s.shape
+def _convolve(w, shift):
+    b, d = shift.shape
     assert b == 1
     assert d == 3
     w = torch.squeeze(w)
     t = torch.cat([w[-1:], w, w[:1]])
-    c = F.conv1d(t.view(1, 1, -1), s.view(1, 1, -1)).view(b, -1)
+    c = F.conv1d(t.view(1, 1, -1), shift.view(1, 1, -1)).view(b, -1)
     return c
