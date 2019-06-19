@@ -73,7 +73,7 @@ class ReadHead(Memory):
 
         key = F.tanh(key)
         stren = F.softplus(stren)
-        gate = F.sigmoid(gqte)
+        gate = F.sigmoid(gate)
         shift = F.softmax(shift, dim=1)
         sharp = 1 + F.softplus(sharp)
 
