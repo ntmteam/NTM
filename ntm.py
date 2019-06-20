@@ -34,7 +34,7 @@ class NTM(nn.Module):
         self._read_write(controller_out)
 
         out = torch.cat((X, self.last_read), -1)
-        out = F.sigmoid(self.fc_out(out))
+        out = torch.sigmoid(self.fc_out(out))
 
         return out
 
@@ -48,7 +48,7 @@ class NTM(nn.Module):
     def initalize_state(self):
         stdev = 1 / (np.sqrt(self.N + self.M))
         self.memory = nn.init.uniform_((torch.Tensor(self.M, self.N)), -stdev, stdev)
-        self.last_read = F.tanh(torch.randn(1, self.N))
+        self.last_read = torch.tanh(torch.randn(1, self.N))
 
         self.read_head.reset_memory()
         self.write_head.reset_memory()
