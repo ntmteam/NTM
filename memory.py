@@ -14,7 +14,6 @@ class Memory(nn.Module):
   def get.weights(self):
     return self.w_last
   
-  
   def reset_memory(self):
     self.w_last = []
     self.w_last.append(torch.zeros([1, self.M], dtype=torch.float32))
@@ -53,21 +52,20 @@ class Memory(nn.Module):
     return w
   
 class ReadHead(Memory):
-
-    def __init__(self, M, N, controller_out):
+  def __init__(self, M, N, controller_out):
         super(ReadHead, self).__init__(M, N, controller_out)
 
         self.fc_read = nn.Linear(controller_out, self.read_lengths)
         self.reset_parameters();
 
-    def reset_parameters(self):
+  def reset_parameters(self):
         nn.init.xavier_uniform_(self.fc_read.weight, gain=1.4)
         nn.init.normal_(self.fc_read.bias, std=0.01)
 
-    def read(self, memory, w):
+  def read(self, memory, w):
         return torch.matmul(w, memory)
 
-    def forward(self, x, memory):
+  def forward(self, x, memory):
         param = self.fc_read(x)
         key, stren, gate, shift, sharp = torch.split(param, [self.N, 1, 1, 3, 1], dim=1)
 
@@ -85,17 +83,17 @@ class ReadHead(Memory):
 
 class WriteHead(Memory):
 
-    def __init__(self, M, N, controller_out):
+  def __init__(self, M, N, controller_out):
         super(WriteHead, self).__init__(M, N, controller_out)
 
         self.fc_write = nn.Linear(controller_out, self.write_lengths)
         self.reset_parameters()
 
-    def reset_parameters(self):
+  def reset_parameters(self):
         nn.init.xavier_uniform_(self.fc_write.weight, gain=1.4)
         nn.init.normal_(self.fc_write.bias, std=0.01)
 
-    def write(self, memory, w, e, a):   
+  def write(self, memory, w, e, a):   
         w = torch.squeeze(w)
         e = torch.squeeze(e)
         a = torch.squeeze(a)
@@ -108,7 +106,7 @@ class WriteHead(Memory):
 
         return memory_update
 
-    def forward(self, x, memory):
+  def forward(self, x, memory):
         param = self.fc_write(x)
 
        key, stren, gate, shift, sharp, a, e = torch.split(param, [self.N, 1, 1, 3, 1, self.N, self.N], dim=1)
