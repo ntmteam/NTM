@@ -10,7 +10,7 @@ class NTM(nn.Module):
     def __init__(self, M, N, input_size, output_size, controller_out_dim, controller_hid_dim):
         super(NTM, self).__init__()
 
-       
+
         self.input_size = input_size
         self.output_size = output_size
         self.M = M
@@ -23,10 +23,11 @@ class NTM(nn.Module):
         self.read_head = ReadHead(self.M, self.N, controller_out_dim)
         self.write_head = WriteHead(self.M, self.N, controller_out_dim)
 
-        self.fc_out = nn.Linear(self.input_size + N, self.num_output_size)
+        self.fc_out = nn.Linear(self.input_size + N, self.output_size)
         self.reset_parameters()
 
     def forward(self, X=None):
+
         if X is None:
             X = torch.zeros(1, self.input_size)
 
@@ -41,7 +42,8 @@ class NTM(nn.Module):
     def _read_write(self, controller_out):
         read, w = self.read_head(controller_out, self.memory)
         self.last_read = read
-        
+
+
         mem, w = self.write_head(controller_out, self.memory)
         self.memory = mem
 
@@ -54,6 +56,7 @@ class NTM(nn.Module):
         self.write_head.reset_memory()
 
     def reset_parameters(self):
+        # Initialize the linear layers
         nn.init.xavier_uniform_(self.fc_out.weight, gain=1.4)
         nn.init.normal_(self.fc_out.bias, std=0.5)
 
@@ -61,6 +64,7 @@ class NTM(nn.Module):
         return self.memory, self.read_head.get_weights(), self.write_head.get_weights()
 
     def calculate_num_params(self):
+
         num_params = 0
         for p in self.parameters():
             num_params += p.data.view(-1).size(0)
