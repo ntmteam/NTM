@@ -11,8 +11,8 @@ class NTM(nn.Module):
         super(NTM, self).__init__()
 
        
-        self.num_inputs = input_size
-        self.num_outputs = output_size
+        self.input_size = input_size
+        self.output_size = output_size
         self.M = M
         self.N = N
 
