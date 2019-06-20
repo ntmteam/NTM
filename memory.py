@@ -71,9 +71,9 @@ class ReadHead(Memory):
         param = self.fc_read(x)
         key, stren, gate, shift, sharp = torch.split(param, [self.N, 1, 1, 3, 1], dim=1)
 
-        key = F.tanh(key)
+        key = torch.tanh(key)
         stren = F.softplus(stren)
-        gate = F.sigmoid(gate)
+        gate = torch.sigmoid(gate)
         shift = F.softmax(shift, dim=1)
         sharp = 1 + F.softplus(sharp)
 
@@ -113,13 +113,13 @@ class WriteHead(Memory):
 
        key, stren, gate, shift, sharp, a, e = torch.split(param, [self.N, 1, 1, 3, 1, self.N, self.N], dim=1)
 
-        key = F.tanh(key)
+        key = torch.tanh(key)
         stren = F.softplus(stren)
-        gate = F.sigmoid(gate)
+        gate = torch.sigmoid(gate)
         shift = F.softmax(shift, dim=-1)
         sharp = 1 + F.softplus(sharp)
-        a = F.tanh(a)
-        e = F.sigmoid(e)
+        a = torch.tanh(a)
+        e = torch.sigmoid(e)
 
         w = self.address(key, stren, gate, shift, sharp, memory, self.w_last[-1])
         self.w_last.append(w)
